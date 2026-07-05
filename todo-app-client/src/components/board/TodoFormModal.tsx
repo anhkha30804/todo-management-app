@@ -253,7 +253,11 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
             <Button type="button" variant="outline" onClick={onClose} disabled={saving}>
               Cancel
             </Button>
-            <Button type="submit" disabled={saving}>
+            <Button
+              type="submit"
+              disabled={saving}
+              className="bg-linear-to-r from-teal-600 to-emerald-600 text-white shadow-sm border border-emerald-500/20 hover:opacity-90 active:scale-[0.98] transition-all"
+            >
               {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Task'}
             </Button>
           </div>

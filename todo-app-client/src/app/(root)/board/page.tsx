@@ -116,7 +116,11 @@ export default function BoardPage() {
       <Header
         title="Board"
         right={
-          <Button size="sm" className="h-8 gap-1.5" onClick={() => openCreate(TodoStatus.PENDING)}>
+          <Button
+            size="sm"
+            className="h-8 gap-1.5 bg-linear-to-r from-teal-600 to-emerald-600 text-white shadow-sm border border-emerald-500/20 hover:opacity-90 active:scale-[0.98] transition-all"
+            onClick={() => openCreate(TodoStatus.PENDING)}
+          >
             <Plus size={14} />
             New Task
           </Button>
