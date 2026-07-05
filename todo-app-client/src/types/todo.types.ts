@@ -1,26 +1,7 @@
-export enum TodoStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed'
-}
+import { TodoStatus, TodoPriority, TodoSortBy, SortOrder } from './enum.types'
 
-export enum TodoPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high'
-}
-
-export enum TodoSortBy {
-  CREATED_AT = 'createdAt',
-  START_DATE = 'start_date',
-  END_DATE = 'end_date',
-  PRIORITY = 'priority'
-}
-
-export enum SortOrder {
-  ASC = 'asc',
-  DESC = 'desc'
-}
+export * from './enum.types'
+export * from './response.types'
 
 export interface Todo {
   _id: string
@@ -34,20 +15,6 @@ export interface Todo {
   createdAt: string
   updatedAt: string
   isMutating?: boolean
-}
-
-export interface PaginationMeta {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
-}
-
-export interface ApiResponse<T> {
-  success: boolean
-  message: string
-  data: T
-  meta?: PaginationMeta
 }
 
 export interface TodoQueryParams {
