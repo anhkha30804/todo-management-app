@@ -63,6 +63,7 @@ export interface CreateTodoPayload {
   title: string
   description?: string
   priority?: TodoPriority
+  status?: TodoStatus
   start_date?: string
   end_date?: string
 }

@@ -1,0 +1,236 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
+import { useCreateTodo, useUpdateTodo } from '@/hooks/useTodos'
+import {
+  CreateTodoPayload,
+  Todo,
+  TodoPriority,
+  TodoStatus,
+  UpdateTodoPayload
+} from '@/types/todo.types'
+import { toast } from 'sonner'
+
+interface TodoFormModalProps {
+  open: boolean
+  onClose: () => void
+  todo?: Todo | null
+  defaultStatus?: TodoStatus
+}
+
+function toLocal(iso?: string) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+function toIso(local: string) {
+  if (!local) return undefined
+  return new Date(local).toISOString()
+}
+
+const EMPTY = {
+  title: '',
+  description: '',
+  priority: TodoPriority.MEDIUM,
+  status: TodoStatus.PENDING,
+  start_date: '',
+  end_date: ''
+}
+
+export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormModalProps) {
+  const isEdit = !!todo
+  const { mutate: createTodo, isPending: creating } = useCreateTodo()
+  const { mutate: updateTodo, isPending: updating } = useUpdateTodo()
+  const saving = creating || updating
+
+  const [form, setForm] = useState(EMPTY)
+  const [err, setErr] = useState('')
+
+  useEffect(() => {
+    if (!open) return
+    setErr('')
+    if (todo) {
+      setForm({
+        title: todo.title,
+        description: todo.description ?? '',
+        priority: todo.priority,
+        status: todo.status,
+        start_date: toLocal(todo.start_date),
+        end_date: toLocal(todo.end_date)
+      })
+    } else {
+      setForm({ ...EMPTY, status: defaultStatus ?? TodoStatus.PENDING })
+    }
+  }, [open, todo, defaultStatus])
+
+  const set = (key: keyof typeof EMPTY) => (val: string) => setForm((f) => ({ ...f, [key]: val }))
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setErr('')
+
+    if (!form.title.trim()) return setErr('Title is required')
+    if (form.start_date && form.end_date && new Date(form.end_date) < new Date(form.start_date)) {
+      return setErr('End date must be after start date')
+    }
+
+    if (isEdit) {
+      const payload: UpdateTodoPayload = {
+        title: form.title.trim(),
+        description: form.description.trim() || undefined,
+        priority: form.priority,
+        status: form.status,
+        start_date: toIso(form.start_date),
+        end_date: toIso(form.end_date)
+      }
+      updateTodo(
+        { id: todo._id, payload },
+        {
+          onSuccess: () => {
+            toast.success('Task updated')
+            onClose()
+          },
+          onError: () => toast.error('Failed to update task')
+        }
+      )
+    } else {
+      const payload: CreateTodoPayload = {
+        title: form.title.trim(),
+        description: form.description.trim() || undefined,
+        priority: form.priority,
+        status: form.status,
+        start_date: toIso(form.start_date),
+        end_date: toIso(form.end_date)
+      }
+      createTodo(payload, {
+        onSuccess: () => {
+          toast.success('Task created')
+          onClose()
+        },
+        onError: () => toast.error('Failed to create task')
+      })
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-[460px]">
+        <DialogHeader>
+          <DialogTitle>{isEdit ? 'Edit Task' : 'New Task'}</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-1">
+          {/* Title */}
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="fm-title">
+              Title <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="fm-title"
+              placeholder="What needs to be done?"
+              value={form.title}
+              onChange={(e) => set('title')(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          {/* Description */}
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="fm-desc">Description</Label>
+            <Textarea
+              id="fm-desc"
+              placeholder="Add details..."
+              value={form.description}
+              onChange={(e) => set('description')(e.target.value)}
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+
+          {/* Priority + Status */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label>Priority</Label>
+              <Select
+                value={form.priority}
+                onValueChange={(v) => v && set('priority')(v as string)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={TodoPriority.LOW}>Low</SelectItem>
+                  <SelectItem value={TodoPriority.MEDIUM}>Medium</SelectItem>
+                  <SelectItem value={TodoPriority.HIGH}>High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label>Status</Label>
+              <Select value={form.status} onValueChange={(v) => v && set('status')(v as string)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={TodoStatus.PENDING}>Pending</SelectItem>
+                  <SelectItem value={TodoStatus.IN_PROGRESS}>In Progress</SelectItem>
+                  <SelectItem value={TodoStatus.COMPLETED}>Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Dates */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="fm-start">Start Date</Label>
+              <input
+                id="fm-start"
+                type="datetime-local"
+                value={form.start_date}
+                onChange={(e) => set('start_date')(e.target.value)}
+                className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="fm-end">End Date</Label>
+              <input
+                id="fm-end"
+                type="datetime-local"
+                value={form.end_date}
+                onChange={(e) => set('end_date')(e.target.value)}
+                className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          </div>
+
+          {err && <p className="text-sm text-destructive">{err}</p>}
+
+          <div className="flex justify-end gap-2 pt-1">
+            <Button type="button" variant="outline" onClick={onClose} disabled={saving}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Task'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}

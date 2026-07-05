@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
-import { Geist } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/shared/providers'
 import { Toaster } from '@/components/ui/sonner'
 
-const geist = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const nunito = Nunito({
+  variable: '--font-sans',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800']
+})
 
 export const metadata: Metadata = {
   title: 'Todo App',
@@ -13,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geist.variable} h-full antialiased`}>
+    <html lang="en" className={`${nunito.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
           {children}
