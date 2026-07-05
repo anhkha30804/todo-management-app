@@ -143,16 +143,17 @@ export default function BoardPage() {
         </div>
 
         <Select value={priority} onValueChange={(v) => v && setPriority(v)}>
-          <SelectTrigger className="h-8 w-[130px] text-sm">
+          <SelectTrigger className="h-8 w-fit text-sm gap-1.5 pl-2.5 pr-3">
+            <span className="text-muted-foreground font-medium text-xs">Priority:</span>
             <SelectValue>
-              {priority === 'all' && 'All priorities'}
+              {priority === 'all' && 'All'}
               {priority === TodoPriority.HIGH && 'High'}
               {priority === TodoPriority.MEDIUM && 'Medium'}
               {priority === TodoPriority.LOW && 'Low'}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All priorities</SelectItem>
+            <SelectItem value="all">All</SelectItem>
             <SelectItem value={TodoPriority.HIGH}>High</SelectItem>
             <SelectItem value={TodoPriority.MEDIUM}>Medium</SelectItem>
             <SelectItem value={TodoPriority.LOW}>Low</SelectItem>
@@ -160,7 +161,8 @@ export default function BoardPage() {
         </Select>
 
         <Select value={sortBy} onValueChange={(v) => v && setSortBy(v as TodoSortBy)}>
-          <SelectTrigger className="h-8 w-[130px] text-sm">
+          <SelectTrigger className="h-8 w-fit text-sm gap-1.5 pl-2.5 pr-3">
+            <span className="text-muted-foreground font-medium text-xs">Sort:</span>
             <SelectValue>
               {sortBy === TodoSortBy.CREATED_AT && 'All Times'}
               {sortBy === TodoSortBy.END_DATE && 'Due date'}

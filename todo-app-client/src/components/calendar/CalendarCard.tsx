@@ -19,7 +19,12 @@ export function CalendarCard({ todo, onEdit }: { todo: Todo; onEdit?: (todo: Tod
       )}
     >
       <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-0.5 mb-1.5">
-        <span className={cn('text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0', priorityCfg.badgeClass)}>
+        <span
+          className={cn(
+            'text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0',
+            priorityCfg.badgeClass
+          )}
+        >
           {priorityCfg.label}
         </span>
         <span className="text-[10px] text-muted-foreground font-medium tabular-nums shrink-0">
@@ -35,9 +40,7 @@ export function CalendarCard({ todo, onEdit }: { todo: Todo; onEdit?: (todo: Tod
           <span className="text-muted-foreground text-[10px]">{statusCfg.label}</span>
         </div>
         {todo.isOverdue && (
-          <span className="text-[9px] font-semibold text-[var(--overdue-text)]">
-            Overdue
-          </span>
+          <span className="text-[9px] font-semibold text-(--overdue-text)">Overdue</span>
         )}
       </div>
     </div>

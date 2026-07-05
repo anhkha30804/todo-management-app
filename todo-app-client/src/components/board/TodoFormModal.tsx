@@ -87,6 +87,14 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
       toast.error('Title is required')
       return
     }
+    if (form.title.length > 200) {
+      toast.error('Title cannot exceed 200 characters')
+      return
+    }
+    if (form.description.length > 1000) {
+      toast.error('Description cannot exceed 1000 characters')
+      return
+    }
     if (!form.start_date) {
       toast.error('Start date is required')
       return
@@ -156,6 +164,7 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
               placeholder="What needs to be done?"
               value={form.title}
               onChange={(e) => set('title')(e.target.value)}
+              maxLength={200}
               autoFocus
             />
           </div>
@@ -169,6 +178,7 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
               value={form.description}
               onChange={(e) => set('description')(e.target.value)}
               rows={3}
+              maxLength={1000}
               className="resize-none"
             />
           </div>
