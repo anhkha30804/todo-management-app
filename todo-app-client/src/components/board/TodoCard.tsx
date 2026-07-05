@@ -7,10 +7,13 @@ import { Todo, TodoStatus } from '@/types/todo.types'
 import { PRIORITY_CONFIG, STATUS_CONFIG } from '@/constants/todo.constants'
 import { useUpdateTodo, useDeleteTodo } from '@/hooks/useTodos'
 import { toast } from 'sonner'
+import { useDraggable } from '@dnd-kit/core'
+import { CSS } from '@dnd-kit/utilities'
 
 interface TodoCardProps {
   todo: Todo
   onEdit: (todo: Todo) => void
+  isOverlay?: boolean
 }
 
 const NEXT_STATUS: Record<TodoStatus, TodoStatus> = {
@@ -23,9 +26,19 @@ function fmtDate(iso: string) {
   return format(new Date(iso), 'MMM d')
 }
 
-export function TodoCard({ todo, onEdit }: TodoCardProps) {
+export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
   const { mutate: updateTodo } = useUpdateTodo()
   const { mutate: deleteTodo } = useDeleteTodo()
+
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: todo._id,
+    disabled: isOverlay
+  })
+
+  const style = {
+    transform: transform ? CSS.Translate.toString(transform) : undefined,
+    opacity: isDragging ? 0.3 : undefined
+  }
 
   const handleStatusCycle = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -50,13 +63,28 @@ export function TodoCard({ todo, onEdit }: TodoCardProps) {
     .filter(Boolean)
     .join(' – ')
 
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="h-[100px] w-full rounded-xl border border-dashed border-border bg-muted/20"
+      />
+    )
+  }
+
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
       className={cn(
-        'group relative bg-card rounded-xl p-3.5 cursor-pointer select-none',
+        'group relative bg-card rounded-xl p-3.5 select-none cursor-grab active:cursor-grabbing',
         'shadow-sm hover:shadow-md transition-shadow duration-150',
         'border border-border/60',
-        todo.isOverdue && 'border-[var(--overdue-border)]'
+        todo.isOverdue && 'border-[var(--overdue-border)]',
+        isOverlay && 'shadow-xl scale-[1.02] border-primary/40'
       )}
       onClick={() => onEdit(todo)}
     >

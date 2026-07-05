@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Search, SortAsc, SortDesc, Plus } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { KanbanColumn } from '@/components/board/KanbanColumn'
+import { TodoCard } from '@/components/board/TodoCard'
 import { TodoFormModal } from '@/components/board/TodoFormModal'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,10 +16,21 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useTodos } from '@/hooks/useTodos'
+import { useTodos, useUpdateTodo } from '@/hooks/useTodos'
 import { useDebounce } from '@/hooks/useDebounce'
-import { KANBAN_COLUMNS } from '@/constants/todo.constants'
+import { KANBAN_COLUMNS, STATUS_CONFIG } from '@/constants/todo.constants'
 import { Todo, TodoPriority, TodoSortBy, SortOrder, TodoStatus } from '@/types/todo.types'
+import { toast } from 'sonner'
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners
+} from '@dnd-kit/core'
 
 export default function BoardPage() {
   const [search, setSearch] = useState('')
@@ -37,11 +49,50 @@ export default function BoardPage() {
     priority: priority !== 'all' ? (priority as TodoPriority) : undefined,
     sortBy: sortBy as TodoSortBy,
     sortOrder: sortOrder as SortOrder,
-    limit: 200
+    limit: 100
   })
 
   const todos = data?.data ?? []
   const byStatus = (status: TodoStatus) => todos.filter((t) => t.status === status)
+
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const { mutate: updateTodo } = useUpdateTodo()
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8
+      }
+    })
+  )
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null)
+    const { active, over } = event
+    if (!over) return
+
+    const todoId = active.id as string
+    const newStatus = over.id as TodoStatus
+
+    const todo = todos.find((t) => t._id === todoId)
+    if (todo && todo.status !== newStatus) {
+      updateTodo(
+        { id: todoId, payload: { status: newStatus } },
+        {
+          onSuccess: () => {
+            toast.success(`Moved to ${STATUS_CONFIG[newStatus].label}`)
+          },
+          onError: () => toast.error('Failed to move task')
+        }
+      )
+    }
+  }
+
+  const activeTodo = todos.find((t) => t._id === activeId)
 
   const openCreate = (status: TodoStatus) => {
     setEditTodo(null)
@@ -117,23 +168,38 @@ export default function BoardPage() {
       </div>
 
       {/* Kanban board — fills remaining height */}
-      <div className="flex-1 overflow-auto p-6 min-h-0">
-        {isLoading ? (
-          <BoardSkeleton />
-        ) : (
-          <div className="flex gap-5 h-full">
-            {KANBAN_COLUMNS.map((status) => (
-              <KanbanColumn
-                key={status}
-                status={status}
-                todos={byStatus(status)}
-                onEdit={openEdit}
-                onAdd={() => openCreate(status)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="flex-1 overflow-auto p-6 min-h-0">
+          {isLoading ? (
+            <BoardSkeleton />
+          ) : (
+            <div className="flex gap-5 h-full">
+              {KANBAN_COLUMNS.map((status) => (
+                <KanbanColumn
+                  key={status}
+                  status={status}
+                  todos={byStatus(status)}
+                  onEdit={openEdit}
+                  onAdd={() => openCreate(status)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <DragOverlay>
+          {activeTodo ? (
+            <div className="w-[300px]">
+              <TodoCard todo={activeTodo} onEdit={() => {}} isOverlay />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       <TodoFormModal
         open={modalOpen}

@@ -4,6 +4,8 @@ import { Plus } from 'lucide-react'
 import { Todo, TodoStatus } from '@/types/todo.types'
 import { STATUS_CONFIG } from '@/constants/todo.constants'
 import { TodoCard } from './TodoCard'
+import { useDroppable } from '@dnd-kit/core'
+import { cn } from '@/lib/utils'
 
 const DOT_VAR: Record<TodoStatus, string> = {
   [TodoStatus.PENDING]: 'var(--status-pending-dot)',
@@ -21,6 +23,10 @@ interface KanbanColumnProps {
 export function KanbanColumn({ status, todos, onEdit, onAdd }: KanbanColumnProps) {
   const config = STATUS_CONFIG[status]
   const dotColor = DOT_VAR[status]
+
+  const { setNodeRef, isOver } = useDroppable({
+    id: status
+  })
 
   return (
     <div className="flex flex-col flex-1 min-w-[260px] h-full">
@@ -45,9 +51,15 @@ export function KanbanColumn({ status, todos, onEdit, onAdd }: KanbanColumnProps
       {/* Cards + add button container */}
       <div className="flex-1 bg-card rounded-xl border border-border/60 flex flex-col overflow-hidden shadow-sm">
         {/* Cards list */}
-        <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-2 min-h-0">
+        <div
+          ref={setNodeRef}
+          className={cn(
+            'flex-1 overflow-y-auto p-2.5 flex flex-col gap-2 min-h-0 transition-colors duration-150 rounded-t-xl',
+            isOver && 'bg-primary/5 border-b border-primary/10'
+          )}
+        >
           {todos.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center py-8">
               <p className="text-xs text-muted-foreground">No tasks</p>
             </div>
           ) : (
