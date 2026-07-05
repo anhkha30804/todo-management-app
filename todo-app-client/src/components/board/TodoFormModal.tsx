@@ -58,11 +58,12 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
   const saving = creating || updating
 
   const [form, setForm] = useState(EMPTY)
-  const [err, setErr] = useState('')
+
+  const minStartDate = isEdit ? undefined : toLocal(new Date().toISOString())
+  const minEndDate = form.start_date || (isEdit ? undefined : toLocal(new Date().toISOString()))
 
   useEffect(() => {
     if (!open) return
-    setErr('')
     if (todo) {
       setForm({
         title: todo.title,
@@ -81,11 +82,14 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setErr('')
 
-    if (!form.title.trim()) return setErr('Title is required')
+    if (!form.title.trim()) {
+      toast.error('Title is required')
+      return
+    }
     if (form.start_date && form.end_date && new Date(form.end_date) < new Date(form.start_date)) {
-      return setErr('End date must be after start date')
+      toast.error('End date must be after start date')
+      return
     }
 
     if (isEdit) {
@@ -212,6 +216,7 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
                 type="datetime-local"
                 value={form.start_date}
                 onChange={(e) => set('start_date')(e.target.value)}
+                min={minStartDate}
                 className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
@@ -222,12 +227,11 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
                 type="datetime-local"
                 value={form.end_date}
                 onChange={(e) => set('end_date')(e.target.value)}
+                min={minEndDate}
                 className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
           </div>
-
-          {err && <p className="text-sm text-destructive">{err}</p>}
 
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="outline" onClick={onClose} disabled={saving}>

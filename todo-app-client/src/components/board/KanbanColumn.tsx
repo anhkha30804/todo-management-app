@@ -39,13 +39,15 @@ export function KanbanColumn({ status, todos, onEdit, onAdd }: KanbanColumnProps
             {todos.length}
           </span>
         </div>
-        <button
-          onClick={onAdd}
-          className="p-1 rounded-md hover:bg-border/60 text-muted-foreground hover:text-foreground transition-colors"
-          title={`Add to ${config.label}`}
-        >
-          <Plus size={15} />
-        </button>
+        {status === TodoStatus.PENDING && (
+          <button
+            onClick={onAdd}
+            className="p-1 rounded-md hover:bg-border/60 text-muted-foreground hover:text-foreground transition-colors"
+            title={`Add to ${config.label}`}
+          >
+            <Plus size={15} />
+          </button>
+        )}
       </div>
 
       {/* Cards + add button container */}
@@ -68,15 +70,17 @@ export function KanbanColumn({ status, todos, onEdit, onAdd }: KanbanColumnProps
         </div>
 
         {/* Add task */}
-        <div className="px-2.5 pb-2.5 shrink-0">
-          <button
-            onClick={onAdd}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-          >
-            <Plus size={12} />
-            Add task
-          </button>
-        </div>
+        {status === TodoStatus.PENDING && (
+          <div className="px-2.5 pb-2.5 shrink-0">
+            <button
+              onClick={onAdd}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+            >
+              <Plus size={12} />
+              Add task
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
