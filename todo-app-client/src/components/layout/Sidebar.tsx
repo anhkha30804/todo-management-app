@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, BarChart2, Calendar, CheckSquare, X, Menu } from 'lucide-react'
+import { LayoutDashboard, BarChart2, Calendar, CheckSquare, X, Menu, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 
 const navItems = [
   { label: 'Overview', href: '/overview', icon: LayoutDashboard },
@@ -14,14 +15,16 @@ const navItems = [
 ]
 
 function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => void }) {
+  const { logout } = useAuth()
+
   return (
     <>
       <div className="h-(--header-height) flex items-center justify-between px-5 border-b border-border shrink-0">
-        <span className="font-semibold text-base text-foreground tracking-tight">todo.</span>
+        <span className="font-semibold text-base text-foreground tracking-tight">todoboard.</span>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground md:hidden"
+            className="text-muted-foreground hover:text-foreground md:hidden shrink-0"
           >
             <X size={18} />
           </button>
@@ -52,6 +55,20 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
           )
         })}
       </nav>
+
+      {/* Logout button at the bottom */}
+      <div className="p-5 border-t border-border flex flex-col gap-3 shrink-0">
+        <button
+          onClick={() => {
+            if (onClose) onClose()
+            logout()
+          }}
+          className="w-full flex items-center gap-3 py-2 px-3 rounded-lg text-sm text-red-500 hover:bg-red-500/5 transition-all cursor-pointer font-medium"
+        >
+          <LogOut size={16} />
+          Sign Out
+        </button>
+      </div>
     </>
   )
 }
