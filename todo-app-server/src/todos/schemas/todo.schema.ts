@@ -1,11 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose'
 import { TodoPriority, TodoStatus } from '../types/todo.type'
 
 export type TodoDocument = HydratedDocument<Todo>
 
 @Schema({ timestamps: true })
 export class Todo {
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  user: Types.ObjectId
+
   @Prop({ required: true, trim: true, maxlength: 200 })
   title: string
 
@@ -30,6 +33,7 @@ export class Todo {
 
 export const TodoSchema = SchemaFactory.createForClass(Todo)
 
+TodoSchema.index({ user: 1 })
 TodoSchema.index({ status: 1 })
 TodoSchema.index({ priority: 1 })
 TodoSchema.index({ start_date: 1 })
