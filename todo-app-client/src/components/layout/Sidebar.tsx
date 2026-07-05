@@ -27,7 +27,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
           </button>
         )}
       </div>
-      <nav className="flex-1 py-4 pl-10 pr-4 flex flex-col gap-0.5 overflow-y-auto">
+      <nav className="flex-1 py-8 pl-12 pr-0 flex flex-col gap-6 overflow-y-auto">
         {navItems.map(({ label, href, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
           return (
@@ -36,13 +36,17 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
               href={href}
               onClick={onClose}
               className={cn(
-                'flex items-center gap-3 px-4 py-2.5 rounded-md text-sm transition-colors',
+                'group flex items-center gap-4 py-2 pr-6 border-r-[3px] transition-all text-sm select-none',
                 active
-                  ? 'bg-sidebar-accent text-sidebar-primary font-semibold border-l-2 border-sidebar-primary rounded-l-none'
-                  : 'text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground'
+                  ? 'border-r-teal-600 text-foreground font-semibold'
+                  : 'border-r-transparent text-muted-foreground hover:text-foreground hover:font-semibold'
               )}
             >
-              <Icon size={16} />
+              <Icon
+                size={18}
+                strokeWidth={active ? 2.5 : 2}
+                className="transition-all group-hover:[stroke-width:2.5px]"
+              />
               {label}
             </Link>
           )

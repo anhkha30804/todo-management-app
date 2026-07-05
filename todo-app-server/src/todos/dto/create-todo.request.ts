@@ -17,12 +17,12 @@ export class CreateTodoRequest {
   priority?: TodoPriority
 
   @IsDateString()
-  @IsOptional()
-  start_date?: string
+  @IsNotEmpty()
+  start_date: string
 
   @IsDateString()
-  @IsOptional()
-  end_date?: string
+  @IsNotEmpty()
+  end_date: string
 
   @IsEnum(TodoStatus)
   @IsOptional()

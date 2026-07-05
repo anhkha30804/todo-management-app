@@ -18,11 +18,11 @@ export class Todo {
   @Prop({ type: String, enum: TodoPriority, default: TodoPriority.MEDIUM })
   priority: TodoPriority
 
-  @Prop({ type: Date })
-  start_date?: Date
+  @Prop({ type: Date, required: true })
+  start_date: Date
 
-  @Prop({ type: Date })
-  end_date?: Date
+  @Prop({ type: Date, required: true })
+  end_date: Date
 
   createdAt: Date
   updatedAt: Date

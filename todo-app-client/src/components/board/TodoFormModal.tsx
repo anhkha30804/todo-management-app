@@ -87,7 +87,15 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
       toast.error('Title is required')
       return
     }
-    if (form.start_date && form.end_date && new Date(form.end_date) < new Date(form.start_date)) {
+    if (!form.start_date) {
+      toast.error('Start date is required')
+      return
+    }
+    if (!form.end_date) {
+      toast.error('End date is required')
+      return
+    }
+    if (new Date(form.end_date) < new Date(form.start_date)) {
       toast.error('End date must be after start date')
       return
     }
@@ -210,7 +218,9 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
           {/* Dates */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="fm-start">Start Date</Label>
+              <Label htmlFor="fm-start">
+                Start Date <span className="text-destructive">*</span>
+              </Label>
               <input
                 id="fm-start"
                 type="datetime-local"
@@ -221,7 +231,9 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="fm-end">End Date</Label>
+              <Label htmlFor="fm-end">
+                End Date <span className="text-destructive">*</span>
+              </Label>
               <input
                 id="fm-end"
                 type="datetime-local"
