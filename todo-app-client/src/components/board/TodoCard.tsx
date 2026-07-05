@@ -83,7 +83,6 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
         'group relative bg-card rounded-xl p-3.5 select-none cursor-grab active:cursor-grabbing',
         'shadow-sm hover:shadow-md transition-all duration-150',
         'border border-border/60',
-        todo.isOverdue && 'border-[var(--overdue-border)]',
         isOverlay && 'shadow-xl scale-[1.02] border-primary/40',
         todo.isMutating && 'pointer-events-none'
       )}
