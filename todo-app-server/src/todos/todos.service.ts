@@ -69,6 +69,7 @@ export class TodosService {
     return this.withIsOverdue(todo) as TodoDocument
   }
 
+  // Toggle Todo Status
   async toggle(id: string): Promise<TodoDocument> {
     const todo = await this.todoModel.findById(id)
     if (!todo) throw new NotFoundException('Todo not found')
