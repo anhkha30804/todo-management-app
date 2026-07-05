@@ -14,7 +14,7 @@ export function CalendarCard({ todo, onEdit }: { todo: Todo; onEdit?: (todo: Tod
         'rounded-lg px-2.5 py-2 text-xs border select-none cursor-pointer transition-all duration-150',
         'hover:shadow-sm hover:border-border/80',
         todo.isOverdue
-          ? 'bg-[var(--overdue-bg)]/30 border-[var(--overdue-border)]/60 hover:bg-[var(--overdue-bg)]/40'
+          ? 'bg-(--overdue-bg)/30 border-(--overdue-border)/60 hover:bg-(--overdue-bg)/40'
           : 'bg-muted/30 border-border/40 hover:bg-muted/50'
       )}
     >

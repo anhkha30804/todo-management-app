@@ -120,7 +120,7 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
           {PRIORITY_CONFIG[todo.priority].label}
         </span>
         {todo.isOverdue && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[var(--overdue-bg)] text-[var(--overdue-text)]">
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-(--overdue-bg) text-(--overdue-text)">
             Overdue
           </span>
         )}
