@@ -21,10 +21,7 @@ export const STATUS_CONFIG: Record<
   }
 }
 
-export const PRIORITY_CONFIG: Record<
-  TodoPriority,
-  { label: string; badgeClass: string }
-> = {
+export const PRIORITY_CONFIG: Record<TodoPriority, { label: string; badgeClass: string }> = {
   [TodoPriority.LOW]: {
     label: 'Low',
     badgeClass: 'bg-[var(--priority-low-bg)] text-[var(--priority-low-text)]'

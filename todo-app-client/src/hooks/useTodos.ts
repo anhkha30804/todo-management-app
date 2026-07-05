@@ -1,18 +1,18 @@
-import { todoService } from "@/services/todo.service";
-import { CreateTodoPayload, TodoQueryParams, UpdateTodoPayload } from "@/types/todo.types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { todoService } from '@/services/todo.service'
+import { CreateTodoPayload, TodoQueryParams, UpdateTodoPayload } from '@/types/todo.types'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const TODO_KEYS = {
-  all: ["todos"] as const,
-  list: (params: TodoQueryParams) => ["todos", "list", params] as const,
-  detail: (id: string) => ["todos", "detail", id] as const
-};
+  all: ['todos'] as const,
+  list: (params: TodoQueryParams) => ['todos', 'list', params] as const,
+  detail: (id: string) => ['todos', 'detail', id] as const
+}
 
 export function useTodos(params: TodoQueryParams = {}) {
   return useQuery({
     queryKey: TODO_KEYS.list(params),
     queryFn: () => todoService.getAll(params)
-  });
+  })
 }
 
 export function useTodo(id: string) {
@@ -20,37 +20,38 @@ export function useTodo(id: string) {
     queryKey: TODO_KEYS.detail(id),
     queryFn: () => todoService.getOne(id),
     enabled: !!id
-  });
+  })
 }
 
 export function useCreateTodo() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: CreateTodoPayload) => todoService.create(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: TODO_KEYS.all })
-  });
+  })
 }
 
 export function useUpdateTodo() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateTodoPayload }) => todoService.update(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateTodoPayload }) =>
+      todoService.update(id, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: TODO_KEYS.all })
-  });
+  })
 }
 
 export function useToggleTodo() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => todoService.toggle(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: TODO_KEYS.all })
-  });
+  })
 }
 
 export function useDeleteTodo() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => todoService.remove(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: TODO_KEYS.all })
-  });
+  })
 }
