@@ -1,7 +1,7 @@
 'use client'
 
 import { format } from 'date-fns'
-import { CalendarDays, Pencil, Trash2 } from 'lucide-react'
+import { CalendarDays, Loader2, Pencil, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Todo, TodoStatus } from '@/types/todo.types'
 import { PRIORITY_CONFIG, STATUS_CONFIG } from '@/constants/todo.constants'
@@ -81,12 +81,13 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
       {...attributes}
       className={cn(
         'group relative bg-card rounded-xl p-3.5 select-none cursor-grab active:cursor-grabbing',
-        'shadow-sm hover:shadow-md transition-shadow duration-150',
+        'shadow-sm hover:shadow-md transition-all duration-150',
         'border border-border/60',
         todo.isOverdue && 'border-[var(--overdue-border)]',
-        isOverlay && 'shadow-xl scale-[1.02] border-primary/40'
+        isOverlay && 'shadow-xl scale-[1.02] border-primary/40',
+        todo.isMutating && 'pointer-events-none'
       )}
-      onClick={() => onEdit(todo)}
+      onClick={todo.isMutating ? undefined : () => onEdit(todo)}
     >
       {/* Hover actions */}
       <div className="absolute top-2.5 right-2.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -168,6 +169,13 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
           </div>
         )}
       </div>
+
+      {/* Optimistic mutation overlay */}
+      {todo.isMutating && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl bg-background/50 backdrop-blur-[1.5px]">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+        </div>
+      )}
     </div>
   )
 }

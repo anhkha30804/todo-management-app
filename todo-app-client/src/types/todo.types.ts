@@ -33,6 +33,7 @@ export interface Todo {
   isOverdue: boolean
   createdAt: string
   updatedAt: string
+  isMutating?: boolean
 }
 
 export interface PaginationMeta {
