@@ -3,7 +3,7 @@
 import { format } from 'date-fns'
 import { CalendarDays, Loader2, Pencil, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Todo, TodoStatus } from '@/types/todo.types'
+import { Todo, TodoStatus, TodoPriority } from '@/types/todo.types'
 import { PRIORITY_CONFIG, STATUS_CONFIG } from '@/constants/todo.constants'
 import { useUpdateTodo, useDeleteTodo } from '@/hooks/useTodos'
 import { toast } from 'sonner'
@@ -68,7 +68,7 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
          <div
             ref={setNodeRef}
             style={style}
-            className="h-[100px] w-full rounded-xl border border-dashed border-border bg-muted/20"
+            className="h-[100px] w-full rounded-xl border border-dashed border-slate-200 bg-slate-50/50"
          />
       )
    }
@@ -80,29 +80,28 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
          {...listeners}
          {...attributes}
          className={cn(
-            'group relative bg-card rounded-xl p-3.5 select-none cursor-grab active:cursor-grabbing',
-            'shadow-sm hover:shadow-md transition-all duration-150',
-            'border border-border/60',
+            'group relative bg-white rounded-xl p-4 select-none cursor-grab active:cursor-grabbing',
+            'border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-[1px] hover:border-slate-300 transition-all duration-200',
             isOverlay && 'shadow-xl scale-[1.02] border-primary/40',
             todo.isMutating && 'pointer-events-none'
          )}
          onClick={todo.isMutating ? undefined : () => onEdit(todo)}
       >
          {/* Hover actions */}
-         <div className="absolute top-2.5 right-2.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+         <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
             <button
                onClick={(e) => {
                   e.stopPropagation()
                   onEdit(todo)
                }}
-               className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+               className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
                title="Edit"
             >
                <Pencil size={12} />
             </button>
             <button
                onClick={handleDelete}
-               className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+               className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 transition-colors"
                title="Delete"
             >
                <Trash2 size={12} />
@@ -113,14 +112,14 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
          <div className="flex flex-wrap items-center gap-1.5 mb-2">
             <span
                className={cn(
-                  'text-[10px] font-semibold px-1.5 py-0.5 rounded',
+                  'text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider',
                   PRIORITY_CONFIG[todo.priority].badgeClass
                )}
             >
                {PRIORITY_CONFIG[todo.priority].label}
             </span>
             {todo.isOverdue && (
-               <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-(--overdue-bg) text-(--overdue-text)">
+               <span className="text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-red-50 text-red-600 border border-red-100">
                   Overdue
                </span>
             )}
@@ -129,8 +128,8 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
          {/* Title */}
          <p
             className={cn(
-               'text-[13px] font-medium leading-snug text-foreground line-clamp-1 pr-10',
-               todo.status === TodoStatus.COMPLETED && 'line-through text-muted-foreground'
+               'text-[13px] font-semibold leading-snug text-slate-800 line-clamp-1 pr-12 transition-all',
+               todo.status === TodoStatus.COMPLETED && 'line-through text-slate-400 font-normal'
             )}
          >
             {todo.title}
@@ -138,7 +137,7 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
 
          {/* Description */}
          {todo.description && (
-            <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+            <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
                {todo.description}
             </p>
          )}
@@ -156,23 +155,23 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
                      STATUS_CONFIG[todo.status].dotClass
                   )}
                />
-               <span className="text-[11px] text-muted-foreground group-hover/s:text-foreground transition-colors">
+               <span className="text-[11px] text-slate-500 group-hover/s:text-slate-700 font-medium transition-colors">
                   {STATUS_CONFIG[todo.status].label}
                </span>
             </button>
 
             {dateLabel && (
-               <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+               <div className="flex items-center gap-1 text-[11px] text-slate-400">
                   <CalendarDays size={11} />
-                  <span>{dateLabel}</span>
+                  <span className="font-medium">{dateLabel}</span>
                </div>
             )}
          </div>
 
          {/* Optimistic mutation overlay */}
          {todo.isMutating && (
-            <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl bg-background/50 backdrop-blur-[1.5px]">
-               <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl bg-white/60 backdrop-blur-[1px]">
+               <Loader2 className="h-5 w-5 animate-spin text-violet-600" />
             </div>
          )}
       </div>

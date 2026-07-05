@@ -241,7 +241,7 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
                         value={form.start_date}
                         onChange={(e) => set('start_date')(e.target.value)}
                         min={minStartDate}
-                        className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground transition-all outline-none focus:border-slate-400 focus:ring-0"
                      />
                   </div>
                   <div className="flex flex-col gap-1.5">
@@ -254,7 +254,7 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
                         value={form.end_date}
                         onChange={(e) => set('end_date')(e.target.value)}
                         min={minEndDate}
-                        className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground transition-all outline-none focus:border-slate-400 focus:ring-0"
                      />
                   </div>
                </div>
