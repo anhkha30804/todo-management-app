@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import type { QueryFilter } from 'mongoose'
 import { Model } from 'mongoose'
@@ -6,16 +6,23 @@ import { CreateTodoRequest } from './dto/create-todo.request'
 import { QueryTodoRequest } from './dto/query-todo.request'
 import { UpdateTodoRequest } from './dto/update-todo.request'
 import { Todo, TodoDocument } from './schemas/todo.schema'
-import { TodoStatus, TodoSortBy, SortOrder, TodoWithOverdue } from './types/todo.type'
+import { SortOrder, TodoSortBy, TodoStatus, TodoWithOverdue } from './types/todo.type'
 
 @Injectable()
 export class TodosService {
   constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) {}
 
+  // Create Todo
   async create(req: CreateTodoRequest): Promise<TodoDocument> {
+    // 1. Validate that end_date is not earlier than start_date
+    if (req.start_date && req.end_date && new Date(req.end_date) < new Date(req.start_date)) {
+      throw new BadRequestException('End date cannot be earlier than start date')
+    }
+    // 2. Create the todo document
     return this.todoModel.create(req)
   }
 
+  // List Todos
   async findAll(req: QueryTodoRequest) {
     const {
       search,
@@ -28,13 +35,16 @@ export class TodosService {
     } = req
     const filter: QueryFilter<TodoDocument> = {}
 
+    // 1. Build Query Filter
     if (search) filter.$text = { $search: search }
     if (status) filter.status = status
     if (priority) filter.priority = priority
 
+    // 2. Build Sort and Pagination
     const skip = (page - 1) * limit
     const sort: Record<string, 1 | -1> = { [sortBy]: sortOrder === SortOrder.ASC ? 1 : -1 }
 
+    // 3. Execute Query
     const [data, total] = await Promise.all([
       this.todoModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
       this.todoModel.countDocuments(filter)
@@ -49,20 +59,35 @@ export class TodosService {
     }
   }
 
+  // Find One Todo by Id
   async findOne(id: string): Promise<TodoWithOverdue> {
     const todo = await this.todoModel.findById(id).lean()
     if (!todo) throw new NotFoundException('Todo not found')
     return this.withIsOverdue(todo)
   }
 
+  // Update Todo
   async update(id: string, req: UpdateTodoRequest): Promise<TodoWithOverdue> {
+    // 1. Find existing todo document
+    const existingTodo = await this.todoModel.findById(id)
+    if (!existingTodo) throw new NotFoundException('Todo not found')
+
+    // 2. Validate that end_date is not earlier than start_date
+    const newStartDate = req.start_date ? new Date(req.start_date) : existingTodo.start_date
+    const newEndDate = req.end_date ? new Date(req.end_date) : existingTodo.end_date
+
+    if (newStartDate && newEndDate && newEndDate < newStartDate) {
+      throw new BadRequestException('End date cannot be earlier than start date')
+    }
+
+    // 3. Perform update and return updated todo
     const todo = await this.todoModel
       .findByIdAndUpdate(id, req, { new: true, runValidators: true })
       .lean()
-    if (!todo) throw new NotFoundException('Todo not found')
     return this.withIsOverdue(todo)
   }
 
+  // Toggle Todo Status
   async toggle(id: string): Promise<TodoWithOverdue> {
     const todo = await this.todoModel.findById(id)
     if (!todo) throw new NotFoundException('Todo not found')
@@ -73,22 +98,30 @@ export class TodosService {
     return this.withIsOverdue(todo.toObject())
   }
 
+  // Remove Todo
   async remove(id: string): Promise<void> {
     const todo = await this.todoModel.findByIdAndDelete(id)
     if (!todo) throw new NotFoundException('Todo not found')
   }
 
   async removeAll(): Promise<void> {
-    // 1.   Delete all todo documents from database
+    // 1. Delete all todo documents from database
     await this.todoModel.deleteMany({})
   }
 
+  // Add isOverdue field
   private withIsOverdue(todo: unknown): TodoWithOverdue {
     const t = todo as Record<string, unknown>
     const isOverdue =
       t.end_date != null &&
       new Date(t.end_date as string) < new Date() &&
       t.status !== TodoStatus.COMPLETED
-    return { ...(t as unknown as Todo), _id: t._id, isOverdue, createdAt: t.createdAt as Date, updatedAt: t.updatedAt as Date }
+    return {
+      ...(t as unknown as Todo),
+      _id: t._id,
+      isOverdue,
+      createdAt: t.createdAt as Date,
+      updatedAt: t.updatedAt as Date
+    }
   }
 }

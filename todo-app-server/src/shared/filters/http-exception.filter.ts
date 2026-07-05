@@ -10,12 +10,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>()
 
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR
 
-    const exceptionResponse =
-      exception instanceof HttpException ? exception.getResponse() : null
+    const exceptionResponse = exception instanceof HttpException ? exception.getResponse() : null
 
     const code = this.resolveCode(status, exceptionResponse)
     const message = this.resolveMessage(exception, exceptionResponse)
@@ -33,14 +30,24 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   }
 
   private resolveCode(status: number, exceptionResponse: unknown): string {
-    if (exceptionResponse && typeof exceptionResponse === 'object' && 'error' in exceptionResponse) {
-      return String((exceptionResponse as Record<string, unknown>).error).toUpperCase().replace(/ /g, '_')
+    if (
+      exceptionResponse &&
+      typeof exceptionResponse === 'object' &&
+      'error' in exceptionResponse
+    ) {
+      return String((exceptionResponse as Record<string, unknown>).error)
+        .toUpperCase()
+        .replace(/ /g, '_')
     }
     return `HTTP_${status}`
   }
 
   private resolveMessage(exception: unknown, exceptionResponse: unknown): string {
-    if (exceptionResponse && typeof exceptionResponse === 'object' && 'message' in exceptionResponse) {
+    if (
+      exceptionResponse &&
+      typeof exceptionResponse === 'object' &&
+      'message' in exceptionResponse
+    ) {
       const msg = (exceptionResponse as Record<string, unknown>).message
       return Array.isArray(msg) ? msg[0] : String(msg)
     }
@@ -49,7 +56,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   }
 
   private resolveDetails(exceptionResponse: unknown): unknown {
-    if (exceptionResponse && typeof exceptionResponse === 'object' && 'message' in exceptionResponse) {
+    if (
+      exceptionResponse &&
+      typeof exceptionResponse === 'object' &&
+      'message' in exceptionResponse
+    ) {
       const msg = (exceptionResponse as Record<string, unknown>).message
       if (Array.isArray(msg) && msg.length > 1) return msg
     }
