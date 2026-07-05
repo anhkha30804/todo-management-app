@@ -69,23 +69,22 @@ export class TodosService {
 
   // Find One Todo by Id
   async findOne(id: string, userId: string): Promise<TodoWithOverdue> {
-    // 1. Find existing todo document by ID and user ownership
-    const todo = await this.todoModel
-      .findOne({ _id: id, user: new Types.ObjectId(userId) as any })
-      .lean()
-    if (!todo) throw new NotFoundException('Todo not found')
+    // 1. Find existing todo document by ID
+    const todo = await this.todoModel.findById(id).lean()
+    if (!todo || todo.user.toString() !== userId) {
+      throw new NotFoundException('Todo not found')
+    }
 
     return this.withIsOverdue(todo)
   }
 
   // Update Todo
   async update(id: string, req: UpdateTodoRequest, userId: string): Promise<TodoWithOverdue> {
-    // 1. Find existing todo document by ID and user ownership
-    const existingTodo = await this.todoModel.findOne({
-      _id: id,
-      user: new Types.ObjectId(userId) as any
-    })
-    if (!existingTodo) throw new NotFoundException('Todo not found')
+    // 1. Find existing todo document by ID
+    const existingTodo = await this.todoModel.findById(id)
+    if (!existingTodo || existingTodo.user.toString() !== userId) {
+      throw new NotFoundException('Todo not found')
+    }
 
     // 2. Validate that end_date is not earlier than start_date
     const newStartDate = req.start_date ? new Date(req.start_date) : existingTodo.start_date
@@ -97,19 +96,18 @@ export class TodosService {
 
     // 3. Perform update and return updated todo
     const todo = await this.todoModel
-      .findOneAndUpdate({ _id: id, user: new Types.ObjectId(userId) as any }, req, {
-        new: true,
-        runValidators: true
-      })
+      .findByIdAndUpdate(id, req, { new: true, runValidators: true })
       .lean()
     return this.withIsOverdue(todo)
   }
 
   // Toggle Todo Status
   async toggle(id: string, userId: string): Promise<TodoWithOverdue> {
-    // 1. Find existing todo document by ID and user ownership
-    const todo = await this.todoModel.findOne({ _id: id, user: new Types.ObjectId(userId) as any })
-    if (!todo) throw new NotFoundException('Todo not found')
+    // 1. Find existing todo document by ID
+    const todo = await this.todoModel.findById(id)
+    if (!todo || todo.user.toString() !== userId) {
+      throw new NotFoundException('Todo not found')
+    }
 
     // 2. Toggle the completed status
     todo.status = todo.status === TodoStatus.COMPLETED ? TodoStatus.PENDING : TodoStatus.COMPLETED
@@ -120,12 +118,14 @@ export class TodosService {
 
   // Remove Todo
   async remove(id: string, userId: string): Promise<void> {
-    // 1. Find and delete the todo document by ID and user ownership
-    const todo = await this.todoModel.findOneAndDelete({
-      _id: id,
-      user: new Types.ObjectId(userId) as any
-    })
-    if (!todo) throw new NotFoundException('Todo not found')
+    // 1. Find existing todo document by ID
+    const todo = await this.todoModel.findById(id)
+    if (!todo || todo.user.toString() !== userId) {
+      throw new NotFoundException('Todo not found')
+    }
+
+    // 2. Delete the todo document
+    await this.todoModel.findByIdAndDelete(id)
   }
 
   async removeAll(): Promise<void> {
