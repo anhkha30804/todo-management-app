@@ -1,6 +1,6 @@
 import { todoService } from '@/services/todo.service'
 import { CreateTodoPayload, TodoQueryParams, UpdateTodoPayload } from '@/types/todo.types'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 
 export const TODO_KEYS = {
   all: ['todos'] as const,
@@ -11,7 +11,8 @@ export const TODO_KEYS = {
 export function useTodos(params: TodoQueryParams = {}) {
   return useQuery({
     queryKey: TODO_KEYS.list(params),
-    queryFn: () => todoService.getAll(params)
+    queryFn: () => todoService.getAll(params),
+    placeholderData: keepPreviousData
   })
 }
 

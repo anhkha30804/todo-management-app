@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Search, SortAsc, SortDesc, Plus } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
+import { cn } from '@/lib/utils'
 import { KanbanColumn } from '@/components/board/KanbanColumn'
 import { TodoCard } from '@/components/board/TodoCard'
 import { TodoFormModal } from '@/components/board/TodoFormModal'
@@ -44,7 +45,7 @@ export default function BoardPage() {
 
   const debouncedSearch = useDebounce(search, 350)
 
-  const { data, isLoading } = useTodos({
+  const { data, isLoading, isFetching } = useTodos({
     search: debouncedSearch || undefined,
     priority: priority !== 'all' ? (priority as TodoPriority) : undefined,
     sortBy: sortBy as TodoSortBy,
@@ -188,7 +189,7 @@ export default function BoardPage() {
           {isLoading ? (
             <BoardSkeleton />
           ) : (
-            <div className="flex gap-5 h-full">
+            <div className={cn('flex gap-5 h-full transition-opacity duration-200', isFetching && 'opacity-60')}>
               {KANBAN_COLUMNS.map((status) => (
                 <KanbanColumn
                   key={status}
