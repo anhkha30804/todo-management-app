@@ -170,7 +170,11 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
                 onValueChange={(v) => v && set('priority')(v as string)}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>
+                    {form.priority === TodoPriority.LOW && 'Low'}
+                    {form.priority === TodoPriority.MEDIUM && 'Medium'}
+                    {form.priority === TodoPriority.HIGH && 'High'}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={TodoPriority.LOW}>Low</SelectItem>
@@ -184,7 +188,11 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
               <Label>Status</Label>
               <Select value={form.status} onValueChange={(v) => v && set('status')(v as string)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>
+                    {form.status === TodoStatus.PENDING && 'Pending'}
+                    {form.status === TodoStatus.IN_PROGRESS && 'In Progress'}
+                    {form.status === TodoStatus.COMPLETED && 'Completed'}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={TodoStatus.PENDING}>Pending</SelectItem>
