@@ -4,6 +4,7 @@ import type { QueryFilter } from 'mongoose'
 import { Model } from 'mongoose'
 import { CreateTodoRequest } from './dto/create-todo.request'
 import { QueryTodoRequest, SortOrder, TodoSortBy } from './dto/query-todo.request'
+import { UpdateTodoRequest } from './dto/update-todo.request'
 import { Todo, TodoDocument, TodoStatus } from './schemas/todo.schema'
 
 @Injectable()
@@ -55,6 +56,15 @@ export class TodosService {
   // Find One Todo by Id
   async findOne(id: string): Promise<TodoDocument> {
     const todo = await this.todoModel.findById(id).lean()
+    if (!todo) throw new NotFoundException('Todo not found')
+    return this.withIsOverdue(todo) as TodoDocument
+  }
+
+  // Update Todo
+  async update(id: string, req: UpdateTodoRequest): Promise<TodoDocument> {
+    const todo = await this.todoModel
+      .findByIdAndUpdate(id, req, { new: true, runValidators: true })
+      .lean()
     if (!todo) throw new NotFoundException('Todo not found')
     return this.withIsOverdue(todo) as TodoDocument
   }

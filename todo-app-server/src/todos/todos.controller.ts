@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common'
 import { successResponse } from '../shared/response/response.helper'
 import { CreateTodoRequest } from './dto/create-todo.request'
 import { QueryTodoRequest } from './dto/query-todo.request'
+import { UpdateTodoRequest } from './dto/update-todo.request'
 import { TodosService } from './todos.service'
 
 @Controller('todos')
@@ -24,5 +25,11 @@ export class TodosController {
   async findOne(@Param('id') id: string) {
     const todo = await this.todosService.findOne(id)
     return successResponse(todo, 'OK')
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() req: UpdateTodoRequest) {
+    const todo = await this.todosService.update(id, req)
+    return successResponse(todo, 'Todo updated')
   }
 }
