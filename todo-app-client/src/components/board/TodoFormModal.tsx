@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -12,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { useCreateTodo, useUpdateTodo } from '@/hooks/useTodos'
 import {
   CreateTodoPayload,
@@ -21,6 +20,7 @@ import {
   TodoStatus,
   UpdateTodoPayload
 } from '@/types/todo.types'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 interface TodoFormModalProps {
@@ -74,7 +74,7 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
         end_date: toLocal(todo.end_date)
       })
     } else {
-      setForm({ ...EMPTY, status: defaultStatus ?? TodoStatus.PENDING })
+      setForm({ ...EMPTY, status: TodoStatus.PENDING })
     }
   }, [open, todo, defaultStatus])
 
@@ -124,7 +124,7 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
         title: form.title.trim(),
         description: form.description.trim() || undefined,
         priority: form.priority,
-        status: form.status,
+        status: TodoStatus.PENDING,
         start_date: toIso(form.start_date),
         end_date: toIso(form.end_date)
       }
@@ -198,7 +198,11 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
 
             <div className="flex flex-col gap-1.5">
               <Label>Status</Label>
-              <Select value={form.status} onValueChange={(v) => v && set('status')(v as string)}>
+              <Select
+                value={form.status}
+                onValueChange={(v) => v && set('status')(v as string)}
+                disabled={!isEdit}
+              >
                 <SelectTrigger>
                   <SelectValue>
                     {form.status === TodoStatus.PENDING && 'Pending'}

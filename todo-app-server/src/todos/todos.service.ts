@@ -18,8 +18,11 @@ export class TodosService {
     if (req.start_date && req.end_date && new Date(req.end_date) < new Date(req.start_date)) {
       throw new BadRequestException('End date cannot be earlier than start date')
     }
-    // 2. Create the todo document
-    return this.todoModel.create(req)
+    // 2. Create the todo document with default pending status
+    return this.todoModel.create({
+      ...req,
+      status: TodoStatus.PENDING
+    })
   }
 
   // List Todos
