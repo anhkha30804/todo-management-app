@@ -41,7 +41,11 @@ export function WeekGrid({ weekDays, getSlot, onEdit }: WeekGridProps) {
           <span>AM</span>
         </div>
         {weekDays.map((day) => (
-          <CalendarCell key={`am-${day.toISOString()}`} todos={getSlot(day, true)} onEdit={onEdit} />
+          <CalendarCell
+            key={`am-${day.toISOString()}`}
+            todos={getSlot(day, true)}
+            onEdit={onEdit}
+          />
         ))}
       </div>
 
@@ -51,7 +55,11 @@ export function WeekGrid({ weekDays, getSlot, onEdit }: WeekGridProps) {
           <span>PM</span>
         </div>
         {weekDays.map((day) => (
-          <CalendarCell key={`pm-${day.toISOString()}`} todos={getSlot(day, false)} onEdit={onEdit} />
+          <CalendarCell
+            key={`pm-${day.toISOString()}`}
+            todos={getSlot(day, false)}
+            onEdit={onEdit}
+          />
         ))}
       </div>
     </div>

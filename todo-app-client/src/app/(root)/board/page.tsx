@@ -126,7 +126,10 @@ export default function BoardPage() {
       {/* Toolbar */}
       <div className="flex items-center gap-2 px-6 py-2.5 border-b border-border bg-card shrink-0">
         <div className="relative">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            size={13}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <Input
             placeholder="Search tasks..."
             value={search}
@@ -170,7 +173,9 @@ export default function BoardPage() {
         </Select>
 
         <button
-          onClick={() => setSortOrder((o) => (o === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC))}
+          onClick={() =>
+            setSortOrder((o) => (o === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC))
+          }
           className="h-8 w-8 flex items-center justify-center rounded-md border border-input bg-background hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
           title={sortOrder === SortOrder.ASC ? 'Ascending' : 'Descending'}
         >
@@ -189,7 +194,12 @@ export default function BoardPage() {
           {isLoading ? (
             <BoardSkeleton />
           ) : (
-            <div className={cn('flex gap-5 h-full transition-opacity duration-200', isFetching && 'opacity-60')}>
+            <div
+              className={cn(
+                'flex gap-5 h-full transition-opacity duration-200',
+                isFetching && 'opacity-60'
+              )}
+            >
               {KANBAN_COLUMNS.map((status) => (
                 <KanbanColumn
                   key={status}
