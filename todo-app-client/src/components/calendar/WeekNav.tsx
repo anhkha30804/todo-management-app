@@ -27,15 +27,10 @@ export function WeekNav({ anchor, setAnchor }: WeekNavProps) {
         <ChevronRight size={16} />
       </button>
       <span className="text-sm font-semibold text-foreground">{weekLabel}</span>
-      {!isCurrentWeek && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-7 text-xs ml-1"
-          onClick={() => setAnchor(currentWeekStart)}
-        >
-          This week
-        </Button>
+      {isCurrentWeek && (
+        <span className="text-[10px] font-bold px-2 py-0.5 ml-1.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 select-none uppercase tracking-wider leading-none">
+          This Week
+        </span>
       )}
     </div>
   )

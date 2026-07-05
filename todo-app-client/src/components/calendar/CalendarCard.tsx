@@ -1,19 +1,21 @@
-import { format } from 'date-fns'
+import { PRIORITY_CONFIG, STATUS_CONFIG } from '@/constants/todo.constants'
 import { cn } from '@/lib/utils'
 import { Todo } from '@/types/todo.types'
-import { PRIORITY_CONFIG, STATUS_CONFIG } from '@/constants/todo.constants'
+import { format } from 'date-fns'
 
-export function CalendarCard({ todo }: { todo: Todo }) {
+export function CalendarCard({ todo, onEdit }: { todo: Todo; onEdit?: (todo: Todo) => void }) {
   const priorityCfg = PRIORITY_CONFIG[todo.priority]
   const statusCfg = STATUS_CONFIG[todo.status]
 
   return (
     <div
+      onClick={() => onEdit?.(todo)}
       className={cn(
-        'rounded-lg px-2.5 py-2 text-xs border',
+        'rounded-lg px-2.5 py-2 text-xs border select-none cursor-pointer transition-all duration-150',
+        'hover:shadow-sm hover:border-border/80',
         todo.isOverdue
-          ? 'bg-[var(--overdue-bg)]/40 border-[var(--overdue-border)]'
-          : 'bg-muted/50 border-border/40'
+          ? 'bg-[var(--overdue-bg)]/30 border-[var(--overdue-border)]/60 hover:bg-[var(--overdue-bg)]/40'
+          : 'bg-muted/30 border-border/40 hover:bg-muted/50'
       )}
     >
       <div className="flex items-center justify-between gap-1 mb-1">
