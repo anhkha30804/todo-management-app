@@ -80,6 +80,12 @@ export class TodosService {
     return this.withIsOverdue(todo.toObject()) as TodoDocument
   }
 
+  // Remove Todo
+  async remove(id: string): Promise<void> {
+    const todo = await this.todoModel.findByIdAndDelete(id)
+    if (!todo) throw new NotFoundException('Todo not found')
+  }
+
   // Add isOverdue field
   private withIsOverdue(todo: object) {
     const t = todo as Record<string, unknown>

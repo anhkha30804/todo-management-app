@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common'
 import { successResponse } from '../shared/response/response.helper'
 import { CreateTodoRequest } from './dto/create-todo.request'
 import { QueryTodoRequest } from './dto/query-todo.request'
@@ -37,5 +37,11 @@ export class TodosController {
   async toggle(@Param('id') id: string) {
     const todo = await this.todosService.toggle(id)
     return successResponse(todo, 'Todo toggled')
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string) {
+    await this.todosService.remove(id)
   }
 }
