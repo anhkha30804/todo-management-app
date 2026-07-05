@@ -32,4 +32,10 @@ export class TodosController {
     const todo = await this.todosService.update(id, req)
     return successResponse(todo, 'Todo updated')
   }
+
+  @Patch(':id/toggle')
+  async toggle(@Param('id') id: string) {
+    const todo = await this.todosService.toggle(id)
+    return successResponse(todo, 'Todo toggled')
+  }
 }

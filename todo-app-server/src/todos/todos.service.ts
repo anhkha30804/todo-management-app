@@ -69,6 +69,16 @@ export class TodosService {
     return this.withIsOverdue(todo) as TodoDocument
   }
 
+  async toggle(id: string): Promise<TodoDocument> {
+    const todo = await this.todoModel.findById(id)
+    if (!todo) throw new NotFoundException('Todo not found')
+
+    todo.status = todo.status === TodoStatus.COMPLETED ? TodoStatus.PENDING : TodoStatus.COMPLETED
+
+    await todo.save()
+    return this.withIsOverdue(todo.toObject()) as TodoDocument
+  }
+
   // Add isOverdue field
   private withIsOverdue(todo: object) {
     const t = todo as Record<string, unknown>
