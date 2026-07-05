@@ -1,0 +1,28 @@
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
+import { successResponse } from '../shared/response/response.helper'
+import { CreateTodoRequest } from './dto/create-todo.request'
+import { QueryTodoRequest } from './dto/query-todo.request'
+import { TodosService } from './todos.service'
+
+@Controller('todos')
+export class TodosController {
+  constructor(private readonly todosService: TodosService) {}
+
+  @Post()
+  async create(@Body() req: CreateTodoRequest) {
+    const todo = await this.todosService.create(req)
+    return successResponse(todo, 'Todo created')
+  }
+
+  @Get()
+  async findAll(@Query() req: QueryTodoRequest) {
+    const { data, total, page, limit, totalPages } = await this.todosService.findAll(req)
+    return successResponse(data, 'OK', { total, page, limit, totalPages })
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const todo = await this.todosService.findOne(id)
+    return successResponse(todo, 'OK')
+  }
+}
