@@ -129,7 +129,7 @@ export function TodoCard({ todo, onEdit, isOverlay }: TodoCardProps) {
       {/* Title */}
       <p
         className={cn(
-          'text-[13px] font-medium leading-snug text-foreground line-clamp-2 pr-10',
+          'text-[13px] font-medium leading-snug text-foreground line-clamp-1 pr-10',
           todo.status === TodoStatus.COMPLETED && 'line-through text-muted-foreground'
         )}
       >
