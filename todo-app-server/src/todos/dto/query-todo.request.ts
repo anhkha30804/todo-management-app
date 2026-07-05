@@ -1,17 +1,6 @@
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
 import { Type } from 'class-transformer'
-import { TodoPriority, TodoStatus } from '../schemas/todo.schema'
-
-export enum TodoSortBy {
-  CREATED_AT = 'createdAt',
-  DUE_DATE = 'due_date',
-  PRIORITY = 'priority'
-}
-
-export enum SortOrder {
-  ASC = 'asc',
-  DESC = 'desc'
-}
+import { TodoPriority, TodoStatus, TodoSortBy, SortOrder } from '../types/todo.type'
 
 export class QueryTodoRequest {
   @IsString()

@@ -1,19 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
+import { TodoPriority, TodoStatus } from '../types/todo.type'
 
 export type TodoDocument = HydratedDocument<Todo>
-
-export enum TodoStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed'
-}
-
-export enum TodoPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high'
-}
 
 @Schema({ timestamps: true })
 export class Todo {
@@ -30,24 +19,20 @@ export class Todo {
   priority: TodoPriority
 
   @Prop({ type: Date })
-  due_date?: Date
+  start_date?: Date
+
+  @Prop({ type: Date })
+  end_date?: Date
 
   createdAt: Date
   updatedAt: Date
-
-  get isOverdue(): boolean {
-    return (
-      this.due_date != null &&
-      this.due_date < new Date() &&
-      this.status !== TodoStatus.COMPLETED
-    )
-  }
 }
 
 export const TodoSchema = SchemaFactory.createForClass(Todo)
 
 TodoSchema.index({ status: 1 })
 TodoSchema.index({ priority: 1 })
-TodoSchema.index({ due_date: 1 })
+TodoSchema.index({ start_date: 1 })
+TodoSchema.index({ end_date: 1 })
 TodoSchema.index({ createdAt: -1 })
 TodoSchema.index({ title: 'text', description: 'text' })

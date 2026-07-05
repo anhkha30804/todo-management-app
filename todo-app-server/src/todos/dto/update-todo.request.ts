@@ -1,5 +1,5 @@
 import { IsDateString, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator'
-import { TodoPriority, TodoStatus } from '../schemas/todo.schema'
+import { TodoPriority, TodoStatus } from '../types/todo.type'
 
 export class UpdateTodoRequest {
   @IsString()
@@ -22,5 +22,9 @@ export class UpdateTodoRequest {
 
   @IsDateString()
   @IsOptional()
-  due_date?: string
+  start_date?: string
+
+  @IsDateString()
+  @IsOptional()
+  end_date?: string
 }
