@@ -2,29 +2,29 @@ import { IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } fro
 import { TodoPriority, TodoStatus } from '../types/todo.type'
 
 export class CreateTodoRequest {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(200)
-  title: string
+   @IsString()
+   @IsNotEmpty()
+   @MaxLength(200)
+   title: string
 
-  @IsString()
-  @IsOptional()
-  @MaxLength(1000)
-  description?: string
+   @IsString()
+   @IsOptional()
+   @MaxLength(1000)
+   description?: string
 
-  @IsEnum(TodoPriority)
-  @IsOptional()
-  priority?: TodoPriority
+   @IsEnum(TodoPriority)
+   @IsOptional()
+   priority?: TodoPriority
 
-  @IsDateString()
-  @IsNotEmpty()
-  start_date: string
+   @IsDateString()
+   @IsNotEmpty()
+   start_date: string
 
-  @IsDateString()
-  @IsNotEmpty()
-  end_date: string
+   @IsDateString()
+   @IsNotEmpty()
+   end_date: string
 
-  @IsEnum(TodoStatus)
-  @IsOptional()
-  status?: TodoStatus
+   @IsEnum(TodoStatus)
+   @IsOptional()
+   status?: TodoStatus
 }

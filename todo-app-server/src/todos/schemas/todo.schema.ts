@@ -6,29 +6,29 @@ export type TodoDocument = HydratedDocument<Todo>
 
 @Schema({ timestamps: true })
 export class Todo {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  user: Types.ObjectId
+   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+   user: Types.ObjectId
 
-  @Prop({ required: true, trim: true, maxlength: 200 })
-  title: string
+   @Prop({ required: true, trim: true, maxlength: 200 })
+   title: string
 
-  @Prop({ trim: true, maxlength: 1000 })
-  description?: string
+   @Prop({ trim: true, maxlength: 1000 })
+   description?: string
 
-  @Prop({ type: String, enum: TodoStatus, default: TodoStatus.PENDING })
-  status: TodoStatus
+   @Prop({ type: String, enum: TodoStatus, default: TodoStatus.PENDING })
+   status: TodoStatus
 
-  @Prop({ type: String, enum: TodoPriority, default: TodoPriority.MEDIUM })
-  priority: TodoPriority
+   @Prop({ type: String, enum: TodoPriority, default: TodoPriority.MEDIUM })
+   priority: TodoPriority
 
-  @Prop({ type: Date, required: true })
-  start_date: Date
+   @Prop({ type: Date, required: true })
+   start_date: Date
 
-  @Prop({ type: Date, required: true })
-  end_date: Date
+   @Prop({ type: Date, required: true })
+   end_date: Date
 
-  createdAt: Date
-  updatedAt: Date
+   createdAt: Date
+   updatedAt: Date
 }
 
 export const TodoSchema = SchemaFactory.createForClass(Todo)
