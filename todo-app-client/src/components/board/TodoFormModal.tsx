@@ -59,8 +59,11 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
 
    const [form, setForm] = useState(EMPTY)
 
-   const minStartDate = isEdit ? undefined : toLocal(new Date().toISOString())
-   const minEndDate = form.start_date || (isEdit ? undefined : toLocal(new Date().toISOString()))
+   const nowLocal = toLocal(new Date().toISOString())
+   const minStartDate = isEdit && todo?.start_date && new Date(todo.start_date) < new Date()
+      ? toLocal(todo.start_date)
+      : nowLocal
+   const minEndDate = form.start_date || minStartDate
 
    useEffect(() => {
       if (!open) return
@@ -106,6 +109,33 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
       if (new Date(form.end_date) < new Date(form.start_date)) {
          toast.error('End date must be after start date')
          return
+      }
+
+      const now = new Date()
+      const startDateVal = new Date(form.start_date)
+      const endDateVal = new Date(form.end_date)
+
+      if (!isEdit) {
+         if (startDateVal < now) {
+            toast.error('Start date cannot be in the past')
+            return
+         }
+         if (endDateVal < now) {
+            toast.error('End date cannot be in the past')
+            return
+         }
+      } else if (todo) {
+         const originalStartStr = toLocal(todo.start_date)
+         const originalEndStr = toLocal(todo.end_date)
+
+         if (form.start_date !== originalStartStr && startDateVal < now) {
+            toast.error('Start date cannot be in the past')
+            return
+         }
+         if (form.end_date !== originalEndStr && endDateVal < now) {
+            toast.error('End date cannot be in the past')
+            return
+         }
       }
 
       if (isEdit) {
