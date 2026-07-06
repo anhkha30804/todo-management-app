@@ -59,10 +59,15 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
 
    const [form, setForm] = useState(EMPTY)
 
-   const nowLocal = toLocal(new Date().toISOString())
-   const minStartDate = isEdit && todo?.start_date && new Date(todo.start_date) < new Date()
+   const today = new Date()
+   today.setHours(0, 0, 0, 0)
+   const d = new Date()
+   const pad = (n: number) => String(n).padStart(2, '0')
+   const todayLocal = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T00:00`
+
+   const minStartDate = isEdit && todo?.start_date && new Date(todo.start_date) < today
       ? toLocal(todo.start_date)
-      : nowLocal
+      : todayLocal
    const minEndDate = form.start_date || minStartDate
 
    useEffect(() => {
@@ -111,16 +116,17 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
          return
       }
 
-      const now = new Date()
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
       const startDateVal = new Date(form.start_date)
       const endDateVal = new Date(form.end_date)
 
       if (!isEdit) {
-         if (startDateVal < now) {
+         if (startDateVal < today) {
             toast.error('Start date cannot be in the past')
             return
          }
-         if (endDateVal < now) {
+         if (endDateVal < today) {
             toast.error('End date cannot be in the past')
             return
          }
@@ -128,11 +134,11 @@ export function TodoFormModal({ open, onClose, todo, defaultStatus }: TodoFormMo
          const originalStartStr = toLocal(todo.start_date)
          const originalEndStr = toLocal(todo.end_date)
 
-         if (form.start_date !== originalStartStr && startDateVal < now) {
+         if (form.start_date !== originalStartStr && startDateVal < today) {
             toast.error('Start date cannot be in the past')
             return
          }
-         if (form.end_date !== originalEndStr && endDateVal < now) {
+         if (form.end_date !== originalEndStr && endDateVal < today) {
             toast.error('End date cannot be in the past')
             return
          }
