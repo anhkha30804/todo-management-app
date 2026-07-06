@@ -25,11 +25,23 @@ async function api<T>(path: string, options?: RequestInit): Promise<T> {
       }
    }
 
-   const json = await res.json()
+   const text = await res.text()
+   let json: any = null
+   try {
+      if (text) {
+         json = JSON.parse(text)
+      }
+   } catch (err) {
+      // Handle parsing error in case body exists but is not JSON
+   }
 
-   if (!res.ok) throw json
+   if (!res.ok) {
+      const errorObj = typeof json === 'object' && json !== null ? json : { message: res.statusText }
+      errorObj.statusCode = res.status
+      throw errorObj
+   }
 
-   return json
+   return json as T
 }
 
 export const http = {

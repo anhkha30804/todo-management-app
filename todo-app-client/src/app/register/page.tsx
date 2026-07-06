@@ -44,8 +44,11 @@ export default function RegisterPage() {
          toast.success('Registration successful! Logging you in...')
          login(response.data.accessToken, response.data.user)
       } catch (error: any) {
-         const errMsg = error?.message || 'Registration failed. Username may be taken.'
-         toast.error(errMsg)
+         if (error?.statusCode === 400 || error?.statusCode === 409) {
+            toast.error('Registration failed. Username may be taken.')
+         } else {
+            toast.error('Something went wrong, please try again')
+         }
       } finally {
          setLoading(false)
       }

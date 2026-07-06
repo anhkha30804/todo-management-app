@@ -32,8 +32,11 @@ export default function LoginPage() {
          toast.success('Welcome back!')
          login(response.data.accessToken, response.data.user)
       } catch (error: any) {
-         const errMsg = error?.message || 'Invalid username or password'
-         toast.error(errMsg)
+         if (error?.statusCode === 400 || error?.statusCode === 401) {
+            toast.error('Invalid username or password')
+         } else {
+            toast.error('Something went wrong, please try again')
+         }
       } finally {
          setLoading(false)
       }
