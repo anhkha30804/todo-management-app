@@ -1,0 +1,31 @@
+# version: '3.8'
+
+services:
+  # NestJS Backend API Server
+  server:
+    build:
+      context: ./todo-app-server
+      dockerfile: Dockerfile
+    container_name: todo-server
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    environment:
+      - NODE_ENV=production
+      - PORT=${BACKEND_PORT}
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: always
+
+  # Next.js Frontend Client
+  client:
+    build:
+      context: ./todo-app-client
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    container_name: todo-client
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    depends_on:
+      - server
+    restart: always

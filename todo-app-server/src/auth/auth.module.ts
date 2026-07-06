@@ -13,9 +13,10 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard'
          inject: [ConfigService],
          useFactory: (config: ConfigService) => {
             const secret = config.get<string>('JWT_SECRET')
+            const expiresIn = (config.get<string>('JWT_EXPIRY') ?? '1d') as any
             return {
                secret,
-               signOptions: { expiresIn: '1d' }
+               signOptions: { expiresIn }
             }
          }
       })

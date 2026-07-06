@@ -6,7 +6,7 @@ import { RecentTasks } from '@/components/overview/RecentTasks'
 import { UpcomingDeadlines } from '@/components/overview/UpcomingDeadlines'
 import { PriorityBreakdown } from '@/components/overview/PriorityBreakdown'
 import { useTodos } from '@/hooks/useTodos'
-import { Skeleton } from '@/components/ui/skeleton'
+import { OverviewSkeleton } from '@/components/overview/OverviewSkeleton'
 
 export default function OverviewPage() {
    const { data, isLoading } = useTodos({ limit: 200 })
@@ -43,25 +43,4 @@ export default function OverviewPage() {
    )
 }
 
-function OverviewSkeleton() {
-   return (
-      <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6 animate-pulse">
-         {/* Hero Skeleton */}
-         <Skeleton className="h-[190px] rounded-2xl" />
 
-         {/* Grid Content Skeleton */}
-         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Column */}
-            <div className="lg:col-span-8">
-               <Skeleton className="h-[360px] rounded-xl" />
-            </div>
-
-            {/* Right Column */}
-            <div className="lg:col-span-4 flex flex-col gap-6">
-               <Skeleton className="h-[210px] rounded-xl" />
-               <Skeleton className="h-[360px] rounded-xl" />
-            </div>
-         </div>
-      </div>
-   )
-}
