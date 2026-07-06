@@ -35,40 +35,47 @@ export function OverdueList({ todos }: OverdueListProps) {
                <p className="text-sm text-muted-foreground font-medium">No overdue tasks!</p>
             </div>
          ) : (
-            <div className="flex flex-col gap-0">
-               {overdue.map((todo) => {
-                  const daysLate = Math.ceil(
-                     (Date.now() - new Date(todo.end_date!).getTime()) / (1000 * 60 * 60 * 24)
-                  )
-                  return (
-                     <div
-                        key={todo._id}
-                        className="flex items-start gap-3 py-2.5 border-b border-border/50 last:border-0"
-                     >
-                        <div className="flex-1 min-w-0">
-                           <p className="text-sm font-medium text-foreground truncate">
-                              {todo.title}
-                           </p>
-                           <div className="flex items-center gap-2 mt-0.5">
-                              <span
-                                 className={cn(
-                                    'text-[10px] font-semibold px-1.5 py-0.5 rounded',
-                                    PRIORITY_CONFIG[todo.priority].badgeClass
-                                 )}
-                              >
-                                 {PRIORITY_CONFIG[todo.priority].label}
-                              </span>
-                              <span className="text-[10px] text-rose-500 font-semibold">
-                                 {daysLate}d overdue
-                              </span>
+            <div className="flex flex-col">
+               <div className="flex flex-col gap-0 max-h-[320px] overflow-y-auto pr-2 scrollbar-thin">
+                  {overdue.slice(0, 15).map((todo) => {
+                     const daysLate = Math.ceil(
+                        (Date.now() - new Date(todo.end_date!).getTime()) / (1000 * 60 * 60 * 24)
+                     )
+                     return (
+                        <div
+                           key={todo._id}
+                           className="flex items-start gap-3 py-2.5 border-b border-border/50 last:border-0"
+                        >
+                           <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">
+                                 {todo.title}
+                              </p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                 <span
+                                    className={cn(
+                                       'text-[10px] font-semibold px-1.5 py-0.5 rounded',
+                                       PRIORITY_CONFIG[todo.priority].badgeClass
+                                    )}
+                                 >
+                                    {PRIORITY_CONFIG[todo.priority].label}
+                                 </span>
+                                 <span className="text-[10px] text-rose-500 font-semibold">
+                                    {daysLate}d overdue
+                                 </span>
+                              </div>
                            </div>
+                           <span className="text-[11px] text-muted-foreground tabular-nums shrink-0">
+                              {format(new Date(todo.end_date!), 'MMM d')}
+                           </span>
                         </div>
-                        <span className="text-[11px] text-muted-foreground tabular-nums shrink-0">
-                           {format(new Date(todo.end_date!), 'MMM d')}
-                        </span>
-                     </div>
-                  )
-               })}
+                     )
+                  })}
+               </div>
+               {overdue.length > 15 && (
+                  <p className="text-[11px] text-muted-foreground text-center mt-3 pt-2 border-t border-border/40">
+                     Showing 15 of {overdue.length} overdue tasks.
+                  </p>
+               )}
             </div>
          )}
       </div>
