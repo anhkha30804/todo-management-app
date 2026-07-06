@@ -21,7 +21,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
       <>
          <div className="h-(--header-height) flex items-center justify-between px-5 border-b border-border shrink-0">
             <span className="font-semibold text-base text-foreground tracking-tight">
-               todoboard.
+               TodoBoard
             </span>
             {onClose && (
                <button

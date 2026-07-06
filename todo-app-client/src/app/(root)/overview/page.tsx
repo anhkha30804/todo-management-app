@@ -15,7 +15,7 @@ export default function OverviewPage() {
    return (
       <div className="flex flex-col flex-1 min-h-0">
          <Header title="Overview" />
-         <main className="flex-1 overflow-auto p-6">
+         <main className="flex-1 overflow-auto px-6 pt-6 pb-12">
             {isLoading ? (
                <OverviewSkeleton />
             ) : (
@@ -24,7 +24,7 @@ export default function OverviewPage() {
                   <OverviewHero todos={todos} />
 
                   {/* Bottom Row: Detailed Grid Layout */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:h-[450px]">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:h-[470px]">
                      {/* Left Column - Workload List */}
                      <div className="lg:col-span-8 flex flex-col min-w-0 lg:h-full">
                         <RecentTasks todos={todos} />
