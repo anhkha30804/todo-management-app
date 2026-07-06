@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Todo Client Application
 
-## Getting Started
+This is the frontend client application for the Todo Management App, built with Next.js (App Router), TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## Architecture and Design Patterns
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The client is structured to optimize performance, clean separation of concerns, and smooth user interactions. Key architectural highlights include:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 1. Client/Server Boundaries
+- Next.js App Router structure separating server-rendered page shells from interactive client components.
+- Interactive dashboards (such as the Kanban Board page) leverage React client hooks for state management and drag-and-drop interactions.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. State & Provider Isolation
+- Local storage and React Context APIs power the AuthProvider and SidebarProvider to maintain state across pages.
+- Authentication tokens are attached dynamically via interceptors to outgoing API requests.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Component-Driven Design
+- Modular directory structure separating reusable primitive UI components (under `/src/components/ui/`) from domain-specific features (such as `/src/components/board/` or `/src/components/overview/`).
+- Consistent styling system built on custom Tailwind utilities, slate-grey borders on input focus, and smooth micro-animations.
 
-## Learn More
+### 4. API Abstraction Layer
+- Encapsulated Axios client under `/src/lib/api.ts` handles BASE_URL injection, request authorization headers, and central error interceptors.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How to Run
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To run the client locally or build the standalone production package, please refer to the main repository documentation:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Please visit: **[Root README](../README.md)**
